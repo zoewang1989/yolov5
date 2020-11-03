@@ -25,9 +25,8 @@ def detect(save_img=False):
     # Initialize
     set_logging()
     device = select_device(opt.device)
-    if os.path.exists(out):  # output dir
-        shutil.rmtree(out)  # delete dir
-    os.makedirs(out)  # make new dir
+    if not os.path.exists(out):  # output dir
+        os.makedirs(out)  # make new dir
     half = device.type != 'cpu'  # half precision only supported on CUDA
 
     # Load model
@@ -87,7 +86,7 @@ def detect(save_img=False):
             else:
                 p, s, im0 = path, '', im0s
 
-            save_path = str(Path(out) / Path(p).name)
+            save_path = str(Path(out) / ("detected_" + Path(p).name))
             txt_path = str(Path(out) / Path(p).stem) + ('_%g' % dataset.frame if dataset.mode == 'video' else '')
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
